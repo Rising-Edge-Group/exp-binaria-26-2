@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stack Zero</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Stack Zero</h1><p class="subtitle">Arquitectura de computadoras, organización de procesos, la pila y GDB</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-05-19</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-org0b884ea">Ejercicio</a></li>
+<li><a href="#/slide-org89e827a">Teoría</a></li>
+<li><a href="#/slide-org6b6cf9d">Verificación en GDB</a></li>
+<li><a href="#/slide-org4cb9e0b">Gracias (:</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org0b884ea">
+<h2 id="org0b884ea">Ejercicio</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #b8a6a9;">/*</span><span style="color: #b8a6a9;">
+ * phoenix/stack-zero, by https://exploit.education
+ *
+ * The aim is to change the contents of the changeme variable.
+</span><span style="color: #b8a6a9;"> */</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdlib.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;string.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;unistd.h&gt;</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#define</span> <span style="color: #7fbbb3;">BANNER</span> \
+  <span style="color: #a7c080;">"Welcome to "</span> LEVELNAME <span style="color: #a7c080;">", brought to you by https://exploit.education"</span>
+
+<span style="color: #e69875;">char</span> *<span style="color: #83c092;">gets</span>(<span style="color: #e69875;">char</span> *);
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>(<span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> **<span style="color: #7fbbb3;">argv</span>) {
+  <span style="color: #8fc69c;">struct</span> {
+    <span style="color: #e69875;">char</span> <span style="color: #7fbbb3;">buffer</span>[64];
+    <span style="color: #8fc69c;">volatile</span> <span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">changeme</span>;
+  } <span style="color: #7fbbb3;">locals</span>;
+
+  printf(<span style="color: #a7c080;">"%s\n"</span>, BANNER);
+
+  locals.changeme = 0;
+  gets(locals.buffer);
+
+  <span style="color: #8fc69c;">if</span> (locals.changeme != 0) {
+    puts(<span style="color: #a7c080;">"Well done, the 'changeme' variable has been changed!"</span>);
+  } <span style="color: #8fc69c;">else</span> {
+    puts(
+        <span style="color: #a7c080;">"Uh oh, 'changeme' has not yet been changed. Would you like to try "</span>
+        <span style="color: #a7c080;">"again?"</span>);
+  }
+
+  exit(0);
+}
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org89e827a">
+<h2 id="org89e827a">Teoría</h2>
+<div class="outline-text-2" id="text-org89e827a">
+</div>
+</section>
+<section id="slide-orgd7b544b">
+<h3 id="orgd7b544b">Arquitectura de computadoras (Speedrun)</h3>
+<div class="outline-text-3" id="text-orgd7b544b">
+</div>
+</section>
+<section id="slide-orgb3e1b4e" data-background="#d3d3d3">
+<h4 id="orgb3e1b4e">CPU, Registros y RAM</h4>
+
+<div id="orgafc7a41" class="figure">
+<p><img src="./img/Memory-Register-Cache-RAM-Hard-Disk.png" alt="Memory-Register-Cache-RAM-Hard-Disk.png" />
+</p>
+</div>
+
+<p>
+Fuente: <a href="https://www.herongyang.com/Linux/Memory-Layers-and-Access-Speed.html">heronyang.com</a>
+</p>
+</section>
+<section id="slide-orge1887f2">
+<h4 id="orge1887f2">Ciclo de ejecución de CPU</h4>
+
+<div id="org99e7af4" class="figure">
+<p><img src="./img/Instruction-Cycle-Example.jpg" alt="Instruction-Cycle-Example.jpg" />
+</p>
+</div>
+</section>
+<section id="slide-org32d4641">
+<h4 id="org32d4641">Arquitectura de registros (x86 vs x86-64)</h4>
+
+<div id="orga936eba" class="figure">
+<p><img src="./img/x86-registers-2376267691.png" alt="x86-registers-2376267691.png" width="60%" align="center" />
+</p>
+</div>
+
+<p>
+Fuente: <a href="https://www.cs.virginia.edu/~evans/cs216/guides/x86.html">CS 216 Virginia</a>
+</p>
+</section>
+<section id="slide-org8976860">
+<h3 id="org8976860">Organización de un proceso en memoria (Linux)</h3>
+
+<div id="org3606a03" class="figure">
+<p><img src="./img/process-structs.png" alt="process-structs.png" align="center" />
+</p>
+</div>
+
+<p>
+Fuente: <a href="https://blog.codingconfessions.com/p/linux-context-switching-internals">codingconfessions.com</a>
+</p>
+</section>
+<section id="slide-org79db249">
+<h4 id="org79db249">Estructura general</h4>
+
+<div id="orgb3e6d6a" class="figure">
+<p><img src="./img/process-memory-layout.png" alt="process-memory-layout.png" width="40%" align="center" />
+</p>
+</div>
+
+<p>
+Fuente: <a href="https://blog.codingconfessions.com/p/linux-context-switching-internals">codingconfessions.com</a>
+</p>
+</section>
+<section id="slide-org007db76">
+<h4 id="org007db76">Segmento de Texto (código)</h4>
+<ul>
+<li>Contiene instrucciones en lenguaje máquina legibles por la CPU.</li>
+<li>Es de <b>solo lectura</b> (<code>Read-Only</code>). Modificarlo directamente provoca un <code>Segmentation Fault</code>.</li>
+
+</ul>
+</section>
+<section id="slide-org08d190c">
+<h4 id="org08d190c">Segmento de Datos y BSS</h4>
+<ul>
+<li><b>Datos (.data):</b> Almacena variables globales y estáticas que ya poseen un
+valor inicializado en el código.</li>
+<li><b>BSS (.bss):</b> Almacena variables globales y estáticas no inicializadas. Se
+rellenan con ceros de forma automática al arrancar.</li>
+
+</ul>
+</section>
+<section id="slide-org165a18e">
+<h4 id="org165a18e">Segmento de Heap</h4>
+<ul>
+<li>Espacio reservado para memoria dinámica solicitada explícitamente por un
+programador(a) (vía <code>malloc</code> / <code>calloc</code>).</li>
+<li>Crece dinámicamente hacia <b>direcciones de memoria más altas</b> (hacia
+arriba).</li>
+
+</ul>
+</section>
+<section id="slide-org895cb2a">
+<h4 id="org895cb2a">Segmento de Pila</h4>
+<ul>
+<li><b>Propósito:</b> Almacena argumentos de funciones, direcciones de retorno y
+todas las <b>variables locales</b> del reto.</li>
+<li><b>Dinámica crucial:</b> Crece hacia <b>direcciones de memoria más bajas</b> (hacia
+abajo)</li>
+
+</ul>
+</section>
+<section id="slide-org260bf3d">
+<h3 id="org260bf3d">La pila y llamadas a funciones</h3>
+<p>
+<a href="https://youtu.be/u_-oQx_4jvo?t=224">https://youtu.be/u_-oQx_4jvo?t=224</a>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org6b6cf9d">
+<h2 id="org6b6cf9d">Verificación en GDB</h2>
+<pre  class="example" >
+file stack-zero
+gdb -q stack-zero
+info functions
+break main
+disassemble main
+run
+break *0x400601
+break *0x40060c
+define hook-stop
+info registers
+x/24wx $rsp
+x/2i $rip
+end
+step instruction
+# Usar 16 'A's e inspeccionar la pila
+restart
+run
+# Usar 16 'A's y 16 'B's
+# Cambiar cada 16 letras y repetir hasta desbordar
+quit
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-org4cb9e0b">
+<h2 id="org4cb9e0b">Gracias (:</h2>
+<blockquote >
+<p>
+everything is open source if you know how to read assembly.
+</p>
+</blockquote>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>
