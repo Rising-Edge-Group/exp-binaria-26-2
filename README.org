@@ -1,0 +1,52 @@
+#+title: Explotación Binaria
+
+¡Hola! En este repositorio encontrarás los materiales de las sesiones brindadas
+de Explotación Binaria en el semestre 2026-2. Nos reunimos los días miércoles
+en el anexo de ingeniería de 1:00 a 3:00 PM.
+
+** Fechas importantes:
+
+- Inicio: 6 de Mayo
+- Fin: 17 de Junio
+
+* Objetivo
+
+Brindar una introducción teórica y práctica a la explotación binaria, con
+principal interés en arquitecturas x86 y x86_64 tanto en GNU/Linux como en
+Windows, mediante la resolución de ejercicios en plataformas tipo Capture The
+Flag (CTF).
+
+* Materiales
+** Temario
+
+El temario de las sesiones es una propuesta y está sujeto a cambios, pues
+dependerá del avance que presenten las y los asistentes en las sesiones.
+
+Puedes encontrar el temario [[./materiales/temario.org][aquí]].
+
+** Plataformas de ejercicios
+
+Como se mencionó, las sesiones tienen un enfoque práctico, por lo que
+utilizaremos las siguientes plataformas para enseñar conceptos relacionados a
+las áreas definidas anteriormente.
+
+- Exploit Education. [[https://exploit.education/][Enlace]]
+
+** Presentaciones
+
+En cada sesión se utiliza una presentación como material de apoyo, estas se
+harán disponibles después de finalizar cada sesión.
+
+Puedes encontrarlas en la carpeta de [[./materiales/presentaciones/][presentaciones]].
+
+** Recursos
+
+- Exploit Writing Tutorials (part 1 - 10). Corelan. [[https://www.corelan.be/index.php/category/exploit-writing-tutorials/?sorting=date_asc][Enlace]].
+
+*** Recursos adicionales
+
+- Erickson, J. (2008). Hacking: the art of exploitation. No starch press..
+  [[https://digtvbg.com/files/books-for-hacking/Hacking%20-%20The%20Art%20of%20Exploitation,%202nd%20Edition%20by%20Jon%20Erickson.pdf][Enlace]].
+- Hack The Box Academy. HTB. [[https://academy.hackthebox.com/][Enlace]] (Tip: crear cuenta con correo institucional)
+- Pwnable.kr. [[https://pwnable.kr/][Enlace]].
+- Microcorruption. NCC Group. [[https://microcorruption.com/][Enlace]].
