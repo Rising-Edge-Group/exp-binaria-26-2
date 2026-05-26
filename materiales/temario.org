@@ -1,0 +1,41 @@
+#+TITLE: Temario Explotación Binaria
+
+En este documento puedes encontrar los temas y ejercicios propuestos a resolver
+para cada sesión.
+
+* Sesión 1 - 06 Mayo
+** Bienvenida e introducción al club
+** ¿Qué es la seguridad de la información?
+** ¿Qué áreas podemos encontrar en el campo laboral?
+** ¿Qué es la explotación binaria?
+** Ejercicios de introducción
+En la plataforma [[https://picoctf.org][PicoCTF]]
+- Let's Warm Up (General Skills)
+- Warmed Up (General Skills)
+
+* Sesión 2 - 13 Mayo
+** Configuración de laboratorio en Windows
+- Instalación WSL2 o QEMU
+** Configuración de laboratorio en Linux
+- Instalación de QEMU
+** Actividad
+- Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
+** Explicación de Teoría
+- Estructuras en C
+- Vista general de variables en memoria
+
+* Sesión 3 - 19 Mayo
+** Recapitulación stack zero
+** Sección teórica
+- Arquitectura de computadoras
+- Organización de un proceso en memoria (Linux)
+- Funcionamiento de la pila y los marcos de pila (stack frames)
+** Verificación de vulnerabilidad
+- Usando GDB verificamos el desbordamiento
+
+* Sesión 4 <2026-05-27 mié>
+** Actividad
+- Stack One, Phoenix ([[https://exploit.education][exploit.education]])
+** Explicación de Teoría
+- /Endianness/ (Byte order)
+** Lectura de código de ética
