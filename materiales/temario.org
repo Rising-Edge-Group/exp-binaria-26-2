@@ -20,22 +20,43 @@ En la plataforma [[https://picoctf.org][PicoCTF]]
 - Instalación de QEMU
 ** Actividad
 - Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
-** Explicación de Teoría
+*** Análisis de programa
+*** Explicación de Teoría
 - Estructuras en C
 - Vista general de variables en memoria
 
 * Sesión 3 - 19 Mayo
 ** Recapitulación stack zero
-** Sección teórica
+** Actividad
+- Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
+*** Análisis de programa
+*** Sección teórica
 - Arquitectura de computadoras
 - Organización de un proceso en memoria (Linux)
 - Funcionamiento de la pila y los marcos de pila (stack frames)
-** Verificación de vulnerabilidad
-- Usando GDB verificamos el desbordamiento
+*** Verificación de vulnerabilidad
+- Usando GDB analizaremos la pila y verificamos el desbordamiento
 
-* Sesión 4 <2026-05-27 mié>
+* Sesión 4 - 27 Mayo
+** Recapitulación stack zero
 ** Actividad
 - Stack One, Phoenix ([[https://exploit.education][exploit.education]])
-** Explicación de Teoría
+*** Análisis de programa
+*** Explicación de Teoría
+- Argumentos de comando
 - /Endianness/ (Byte order)
-** Lectura de código de ética
+*** Verificación de vulnerabilidad
+- Usando GDB analizaremos la pila y verificamos el desbordamiento
+
+* Sesión 5 - 27 Mayo
+** Recapitulación stack one
+** Actividad 1
+- Stack two, Phoenix ([[https://exploit.education][exploit.education]])
+*** Análisis de programa
+*** Explicación de Teoría
+*** Verificación de vulnerabilidad
+** Actividad 2
+- Stack three, Phoenix ([[https://exploit.education][exploit.education]])
+*** Análisis de programa
+*** Explicación de Teoría
+*** Verificación de vulnerabilidad
