@@ -1,0 +1,205 @@
+#+title: Stack One
+#+SUBTITLE: Argumentos de línea de comandos y Endianness
+#+AUTHOR: Rising Edge - Enrique
+#+DATE: 2026-05-27
+
+:reveal_properties:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+OPTIONS: timestamp:nil toc:1 num:nil
+#+REVEAL_THEME: dracula
+:end:
+
+* Recapitulación
+
+- CPU (Interrupt? -> Fetch -> Decode -> Execute)
+- Registros (EAX, ESP, EBP, RIP, etc.)
+- Ciclo de vida de un programa (Disco -> RAM -> Instrucciones)
+- Estructura de un proceso en memoria
+
+* Ejercicio stack-one
+** Código
+
+#+begin_src c
+/*
+ ,* phoenix/stack-one, by https://exploit.education
+ ,*
+ ,* The aim is to change the contents of the changeme variable to 0x496c5962
+ ,*
+ ,*/
+
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BANNER \
+  "Welcome to " LEVELNAME ", brought to you by https://exploit.education"
+
+int main(int argc, char **argv) {
+  struct {
+    char buffer[64];
+    volatile int changeme; // 32 bits
+  } locals;
+
+  printf("%s\n", BANNER);
+
+  if (argc < 2) {
+    errx(1, "specify an argument, to be copied into the \"buffer\"");
+  }
+
+  locals.changeme = 0;
+  strcpy(locals.buffer, argv[1]);
+
+  if (locals.changeme == 0x496c5962) {
+    puts("Well done, you have successfully set changeme to the correct value");
+  } else {
+    printf("Getting closer! changeme is currently 0x%08x, we want 0x496c5962\n",
+        locals.changeme);
+  }
+
+  exit(0);
+}
+#+end_src
+
+** Resumiendo el código...
+
+#+begin_src text
+si num_argumentos < 2:
+  error()
+
+locals.changeme = 0
+
+locals.buffer = argv[1]
+
+si locals.changeme == 0x496c5962:
+    imprime "bien"
+en otro caso:
+    imprime "ya casi, valor..."
+#+end_src
+
+** Objetivo
+
+Cambiar el valor de ~locals.changeme~ a ~0x496c5962~.
+
+* Teoría
+
+** Argumentos (~argc~ y ~argv~)
+
+- [[https://stackoverflow.com/questions/3024197/what-does-int-argc-char-argv-mean][Significado]]
+- Forma en la que se pasan argumentos a un comando.
+- ~argc~ = argument count, cuántos argumentos.
+- ~argv~ = argument vector, los argumentos en sí.
+
+*** Programa ejemplo
+
+#+name: ejemplo-argumentos
+#+begin_src C :results verbatim :exports both :cmdline "Hola" "Mundo cruel" "7331"
+#include <stdio.h>
+
+int main( int argc, char *argv[] ) {
+    printf("Num. argumentos:\t %d\n", argc);
+    for (size_t i = 0; i < argc; i++) {
+        printf("Argumento #%d:\t %s\n", i, argv[i]);
+    }
+    return 0;
+}
+#+end_src
+
+*** Salida de ejemplo
+
+#+begin_src bash
+./ejemplo-argumentos "Hola" "Mundo cruel" "7331"
+#+end_src
+
+#+RESULTS: ejemplo-argumentos
+: Num. argumentos:	 4
+: Argumento #0:	 /tmp/babel-Z4CJF9/C-bin-WJ5BYi
+: Argumento #1:	 Hola
+: Argumento #2:	 Mundo cruel
+: Argumento #3:	 7331
+
+** Endianness
+
+- [[https://en.wikipedia.org/wiki/Endianness][Wiki]]
+- Dos formas de organizar bytes
+- Big-endian: Most Significant Bit en dirección baja.
+- Little-endian: Byte menos significativo en la dirección más baja.
+
+* Verificación en GDB
+
+** Objetivo
+
+- Visualizar la pila del programa en el depurador GDB.
+- Identificar cómo crece la pila.
+- Entender el prólogo y epílogo de la función ~main~.
+- Identificar endianness en ejecución.
+
+** Análisis previo a ejecución
+
+*** Archivo
+
+#+name: file-stack-one
+#+begin_src bash
+file /opt/phoenix/amd64/stack-one
+#+end_src
+
+#+begin_src text
+/opt/phoenix/amd64/stack-one: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+#+end_src
+
+- Usa Little-Endian pues es un LSB executable
+
+*** Medidas de protección
+
+#+name: checksec-stack-one
+#+begin_src bash
+checksec /opt/phoenix/amd64/stack-one
+#+end_src
+
+#+begin_src text
+[*] '/opt/phoenix/amd64/stack-one'
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX disabled
+    PIE:      No PIE (0x400000)
+    RWX:      Has RWX segments
+    RPATH:    '/opt/phoenix/x86_64-linux-musl/lib'
+#+end_src
+
+- Sin medidas de protección (:
+
+** Ejecutar GDB
+
+#+begin_src bash
+gdb -q /opt/phoenix/amd64/stack-one
+#+end_src
+
+** Proceso de verificación
+
+#+begin_src
+file stack-one
+gdb -q stack-one
+info functions
+disassemble main
+break *0x04006c1
+define hook-stop
+info registers
+x/24wx $rsp
+x/2i $rip
+end
+run "AAAAAAAAAAAAAAAA"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIlYb"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbYlI"
+continue
+quit
+#+end_src
+
+* Gracias (:
+
+¿Dudas?

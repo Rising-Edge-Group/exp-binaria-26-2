@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stack One</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Stack One</h1><p class="subtitle">Argumentos de línea de comandos y Endianness</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-05-27</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-org66865fb">Recapitulación</a></li>
+<li><a href="#/slide-org87de2b7">Ejercicio stack-one</a></li>
+<li><a href="#/slide-org9330f08">Teoría</a></li>
+<li><a href="#/slide-org35e1362">Verificación en GDB</a></li>
+<li><a href="#/slide-orgeeb5a73">Gracias (:</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org66865fb">
+<h2 id="org66865fb">Recapitulación</h2>
+<ul>
+<li>CPU (Interrupt? -&gt; Fetch -&gt; Decode -&gt; Execute)</li>
+<li>Registros (EAX, ESP, EBP, RIP, etc.)</li>
+<li>Ciclo de vida de un programa (Disco -&gt; RAM -&gt; Instrucciones)</li>
+<li>Estructura de un proceso en memoria</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org87de2b7">
+<h2 id="org87de2b7">Ejercicio stack-one</h2>
+<div class="outline-text-2" id="text-org87de2b7">
+</div>
+</section>
+<section id="slide-orge11c6d9">
+<h3 id="orge11c6d9">Código</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #b8a6a9;">/*</span><span style="color: #b8a6a9;">
+ * phoenix/stack-one, by https://exploit.education
+ *
+ * The aim is to change the contents of the changeme variable to 0x496c5962
+ *
+</span><span style="color: #b8a6a9;"> */</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;err.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdlib.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;string.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;unistd.h&gt;</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#define</span> <span style="color: #7fbbb3;">BANNER</span> \
+  <span style="color: #a7c080;">"Welcome to "</span> LEVELNAME <span style="color: #a7c080;">", brought to you by https://exploit.education"</span>
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>(<span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> **<span style="color: #7fbbb3;">argv</span>) {
+  <span style="color: #8fc69c;">struct</span> {
+    <span style="color: #e69875;">char</span> <span style="color: #7fbbb3;">buffer</span>[64];
+    <span style="color: #8fc69c;">volatile</span> <span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">changeme</span>; <span style="color: #b8a6a9;">// </span><span style="color: #b8a6a9;">32 bits
+</span>  } <span style="color: #7fbbb3;">locals</span>;
+
+  printf(<span style="color: #a7c080;">"%s\n"</span>, BANNER);
+
+  <span style="color: #8fc69c;">if</span> (argc &lt; 2) {
+    errx(1, <span style="color: #a7c080;">"specify an argument, to be copied into the \"buffer\""</span>);
+  }
+
+  locals.changeme = 0;
+  strcpy(locals.buffer, argv[1]);
+
+  <span style="color: #8fc69c;">if</span> (locals.changeme == 0x496c5962) {
+    puts(<span style="color: #a7c080;">"Well done, you have successfully set changeme to the correct value"</span>);
+  } <span style="color: #8fc69c;">else</span> {
+    printf(<span style="color: #a7c080;">"Getting closer! changeme is currently 0x%08x, we want 0x496c5962\n"</span>,
+        locals.changeme);
+  }
+
+  exit(0);
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-orgad62a46">
+<h3 id="orgad62a46">Resumiendo el código&hellip;</h3>
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>si num_argumentos &lt; 2:
+  error()
+
+locals.changeme = 0
+
+locals.buffer = argv[1]
+
+si locals.changeme == 0x496c5962:
+    imprime "bien"
+en otro caso:
+    imprime "ya casi, valor..."
+</code></pre>
+</div>
+</section>
+<section id="slide-org8f57c8e">
+<h3 id="org8f57c8e">Objetivo</h3>
+<p>
+Cambiar el valor de <code>locals.changeme</code> a <code>0x496c5962</code>.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org9330f08">
+<h2 id="org9330f08">Teoría</h2>
+<div class="outline-text-2" id="text-org9330f08">
+</div>
+</section>
+<section id="slide-org132bd3f">
+<h3 id="org132bd3f">Argumentos (<code>argc</code> y <code>argv</code>)</h3>
+<ul>
+<li><a href="https://stackoverflow.com/questions/3024197/what-does-int-argc-char-argv-mean">Significado</a></li>
+<li>Forma en la que se pasan argumentos a un comando.</li>
+<li><code>argc</code> = argument count, cuántos argumentos.</li>
+<li><code>argv</code> = argument vector, los argumentos en sí.</li>
+
+</ul>
+</section>
+<section id="slide-org3ac838a">
+<h4 id="org3ac838a">Programa ejemplo</h4>
+<div class="org-src-container">
+
+<pre  class="src src-C" id="ejemplo-argumentos"  ><code trim><span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>( <span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> *<span style="color: #7fbbb3;">argv</span>[] ) {
+    printf(<span style="color: #a7c080;">"Num. argumentos:\t %d\n"</span>, argc);
+    <span style="color: #8fc69c;">for</span> (<span style="color: #e69875;">size_t</span> <span style="color: #7fbbb3;">i</span> = 0; i &lt; argc; i++) {
+        printf(<span style="color: #a7c080;">"Argumento #%d:\t %s\n"</span>, i, argv[i]);
+    }
+    <span style="color: #8fc69c;">return</span> 0;
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org19f652d">
+<h4 id="org19f652d">Salida de ejemplo</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>./ejemplo-argumentos <span style="color: #a7c080;">"Hola"</span> <span style="color: #a7c080;">"Mundo cruel"</span> <span style="color: #a7c080;">"7331"</span>
+</code></pre>
+</div>
+
+<pre class="example">
+Num. argumentos:	 4
+Argumento #0:	 /tmp/babel-Z4CJF9/C-bin-SbhATG
+Argumento #1:	 Hola
+Argumento #2:	 Mundo cruel
+Argumento #3:	 7331
+</pre>
+</section>
+<section id="slide-orgbc2a493">
+<h3 id="orgbc2a493">Endianness</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Endianness">Wiki</a></li>
+<li>Dos formas de organizar bytes</li>
+<li>Big-endian: Most Significant Bit en dirección baja.</li>
+<li>Little-endian: Byte menos significativo en la dirección más baja.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org35e1362">
+<h2 id="org35e1362">Verificación en GDB</h2>
+<div class="outline-text-2" id="text-org35e1362">
+</div>
+</section>
+<section id="slide-orgca9d685">
+<h3 id="orgca9d685">Objetivo</h3>
+<ul>
+<li>Visualizar la pila del programa en el depurador GDB.</li>
+<li>Identificar cómo crece la pila.</li>
+<li>Entender el prólogo y epílogo de la función <code>main</code>.</li>
+<li>Identificar endianness en ejecución.</li>
+
+</ul>
+</section>
+<section id="slide-org294ad70">
+<h3 id="org294ad70">Análisis previo a ejecución</h3>
+<div class="outline-text-3" id="text-org294ad70">
+</div>
+</section>
+<section id="slide-orgd349c6f">
+<h4 id="orgd349c6f">Archivo</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="file-stack-one"  ><code trim>file /opt/phoenix/amd64/stack-one
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>/opt/phoenix/amd64/stack-one: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+</code></pre>
+</div>
+
+<ul>
+<li>Usa Little-Endian pues es un LSB executable</li>
+
+</ul>
+</section>
+<section id="slide-org501a326">
+<h4 id="org501a326">Medidas de protección</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="checksec-stack-one"  ><code trim>checksec /opt/phoenix/amd64/stack-one
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>[*] '/opt/phoenix/amd64/stack-one'
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX disabled
+    PIE:      No PIE (0x400000)
+    RWX:      Has RWX segments
+    RPATH:    '/opt/phoenix/x86_64-linux-musl/lib'
+</code></pre>
+</div>
+
+<ul>
+<li>Sin medidas de protección (:</li>
+
+</ul>
+</section>
+<section id="slide-orgb03e24f">
+<h3 id="orgb03e24f">Ejecutar GDB</h3>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>gdb -q /opt/phoenix/amd64/stack-one
+</code></pre>
+</div>
+</section>
+<section id="slide-org7450a0c">
+<h3 id="org7450a0c">Proceso de verificación</h3>
+<pre  class="example" >
+file stack-one
+gdb -q stack-one
+info functions
+disassemble main
+break *0x04006c1
+define hook-stop
+info registers
+x/24wx $rsp
+x/2i $rip
+end
+run "AAAAAAAAAAAAAAAA"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIlYb"
+continue
+run "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbYlI"
+continue
+quit
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orgeeb5a73">
+<h2 id="orgeeb5a73">Gracias (:</h2>
+<p>
+¿Dudas?
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>
