@@ -1,0 +1,17 @@
+#+title: Presentaciones
+
+En esta carpeta puedes encontrar las presentaciones y los archivos fuente donde
+se escriben estas mismas.
+
+*Nota*: Para visualizar correctamente las presentaciones es necesario tener una
+conexión a internet, pues reveal.js utiliza hojas de estilo disponibles en su
+CDN. Alternativamente puedes [[https://revealjs.com/installation/#basic-setup][instalar]]
+reveal.js en tu computadora.
+
+Los archivos ~.org~ son archivos escritos en [[https://orgmode.org/][Org Mode]]
+un modo mayor del editor de texto GNU Emacs, estos son procesados por el paquete
+[[https://github.com/yjwen/org-reveal/][org-reveal]] para crear una presentación
+en HTML con el framework [[https://revealjs.com][reveal.js]].
+
+Es decir, el archivo ~.org~ es la versión en texto de la presentación, mientras
+que el archivo ~.html~ son las diapositivas que puedes ver en un navegador web.
