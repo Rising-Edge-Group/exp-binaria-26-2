@@ -30,7 +30,7 @@ Como se mencionó, las sesiones tienen un enfoque práctico, por lo que
 utilizaremos las siguientes plataformas para enseñar conceptos relacionados a
 las áreas definidas anteriormente.
 
-- Exploit Education. [[https://exploit.education/][Enlace]]
+- Exploit Education. [[https://exploit.education/][Enlace]].
 
 ** Presentaciones
 
@@ -45,8 +45,11 @@ Puedes encontrarlas en la carpeta de [[./materiales/presentaciones/][presentacio
 
 *** Recursos adicionales
 
-- Modern Binary Exploitation - CSCI 4968. Rensselaer Polytechnic Institute. [[https://github.com/RPISEC/MBE][Enlace]].
+- Modern Binary Exploitation - CSCI 4968. Rensselaer Polytechnic Institute.
+  [[https://github.com/RPISEC/MBE][Enlace]].
 - Erickson, J. (2008). Hacking: the art of exploitation. No starch press.. [[https://digtvbg.com/files/books-for-hacking/Hacking%20-%20The%20Art%20of%20Exploitation,%202nd%20Edition%20by%20Jon%20Erickson.pdf][Enlace]].
+- Intro to binary exploitation (Pwn). YouTube CryptoCat.
+  [[https://www.youtube.com/playlist?list=PLHUKi1UlEgOIc07Rfk2Jgb5fZbxDPec94][Enlace]].
 - Pwnable.kr. [[https://pwnable.kr/][Enlace]].
 - Microcorruption. NCC Group. [[https://microcorruption.com/][Enlace]].
 - Hack The Box Academy. HTB. [[https://academy.hackthebox.com/][Enlace]]. (Tip: crear cuenta con correo institucional)
