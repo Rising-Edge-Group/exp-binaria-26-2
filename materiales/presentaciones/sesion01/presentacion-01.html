@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Explotación Binaria</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Explotación Binaria</h1><p class="subtitle">Introducción a ciberseguridad y conceptos básicos</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-05-06</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-orgc1353d7">Introducción del club</a></li>
+<li><a href="#/slide-org246cc37">¿Quién eres?</a></li>
+<li><a href="#/slide-orgab7b5bf">Conceptos importantes antes de iniciar</a></li>
+<li><a href="#/slide-org83130db">Ejercicios de calentamiento</a></li>
+<li><a href="#/slide-orgab80484">Cierre</a></li>
+<li><a href="#/slide-org791d063">¡Gracias!</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-orgc1353d7">
+<h2 id="orgc1353d7">Introducción del club</h2>
+<div class="outline-text-2" id="text-orgc1353d7">
+</div>
+</section>
+<section id="slide-orgf561e1a">
+<h3 id="orgf561e1a">¡Hola! Somos Rising Edge</h3>
+<ul>
+<li class="fragment appear">Una organización estudiantil enfocada en áreas de la computación como
+<ul>
+<li>Ciberseguridad</li>
+<li>Programación competitiva</li>
+<li>Desarrollo de Software y Hardware</li>
+<li>¡Y posiblemente más áreas en el futuro!</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6cd6902">
+<h3 id="org6cd6902">Un poco de historia</h3>
+<ul>
+<li class="fragment appear">Antes de la pandemia existía un club de algoritmia, al regresar presencial ya
+no se retomó.</li>
+<li class="fragment appear">Al inicio sólo éramos estudiantes de licenciatura aprendiendo programación y
+haciendo ejercicios de omegaUp y Codeforces.</li>
+
+</ul>
+</section>
+<section id="slide-orgbb44113">
+<h3 id="orgbb44113">Hoy</h3>
+<ul>
+<li>El club ha representado a la la ESIME Culhuacan en varios eventos a nivel
+nacional e internacional.</li>
+<li>Está conformado por egresad@s, estudiantes de licenciatura y posgrado.</li>
+
+</ul>
+</section>
+<section id="slide-org88aa8a7">
+<h3 id="org88aa8a7">Objetivo de ciberseguridad</h3>
+<ul>
+<li class="fragment appear">Aprender y formarnos en temas relacionados a la ciberseguridad ofensiva y
+defensiva.</li>
+<li class="fragment appear">Participar en competencias tipo Capture The Flag (CTF).</li>
+<li class="fragment appear"><b>¡Representar a la ESIME Culhuacan en el HackMex!</b></li>
+
+</ul>
+</section>
+<section id="slide-orge22f5b6" data-background-iframe="https://www.hackmex.mx/" data-background-interactive>
+<div style="background: rgb(0,0,0); opacity: 0.5; ">
+<h3 id="orge22f5b6">¿Hackmex?</h3>
+<ul>
+<li>CTF que organiza la ESIME Culhuacan en octubre.</li>
+<li>Participan instituciones de gobierno, académicas y empresas.</li>
+
+</ul>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org246cc37">
+<h2 id="org246cc37">¿Quién eres?</h2>
+<ul>
+<li>¿Cuál es tu nombre o cómo te gusta que te llamen?</li>
+<li>¿Qué estudias?</li>
+<li>¿Cómo te enteraste del club?</li>
+<li>¿Algún dato curioso de ti?</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgab7b5bf">
+<h2 id="orgab7b5bf">Conceptos importantes antes de iniciar</h2>
+<div class="outline-text-2" id="text-orgab7b5bf">
+</div>
+</section>
+<section id="slide-orge25d512">
+<h3 id="orge25d512">¿Qué es la seguridad de la información?</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Computer_security">Enlace</a>.</li>
+<li>Práctica de <b>proteger</b> la <b>información</b> mediante la mitigación de riesgos usando
+medidas preventivas y reactivas.</li>
+<li>Busca mantener la triada CID (CIA en inglés).</li>
+
+</ul>
+</section>
+<section id="slide-orgf86c042">
+<h4 id="orgf86c042">Modelo de protección CID</h4>
+<ul>
+<li class="fragment appear">Confidencialidad
+<ul>
+<li>Datos sensibles sólo para entidades autorizadas.</li>
+
+</ul></li>
+<li class="fragment appear">Integridad
+<ul>
+<li>Datos se mantienen exactos, consistentes y sin alterar (en transmisión o
+almacenamiento).</li>
+
+</ul></li>
+<li class="fragment appear">Disponibilidad
+<ul>
+<li>Datos y recursos de red son accesibles a usuarios autorizados cuando son
+necesarios.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3548e66">
+<h3 id="org3548e66">¿Es lo mismo la seguridad de la información que la seguridad informática?</h3>
+<ul>
+<li><b>No</b>, la última es un área relacionada con la informática y la telemática que se
+enfoca en la protección de la <b>infraestructura computacional</b>.
+<ul>
+<li>Información contenida en una computadora.</li>
+<li>Información enviada a través de redes de computadoras.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org48fb0bd">
+<h3 id="org48fb0bd">¿Qué es la explotación binaria?</h3>
+<p>
+La explotación de binarios consiste en <b>alterar</b> una <b>aplicación compilada</b> para
+que <b>falle</b> de alguna manera que resulte <b>ventajosa</b> para el atacante.
+</p>
+
+<blockquote >
+<p>
+The one where we smash the stack.
+</p>
+</blockquote>
+</section>
+<section id="slide-org201f40b">
+<h4 id="org201f40b">Algunas áreas que involucra la explotación binaria</h4>
+<ul>
+<li>Arquitectura de computadoras</li>
+<li>Programación</li>
+<li>Sistemas Operativos</li>
+<li>Ingeniería Inversa</li>
+<li>Criptografía</li>
+<li>Redes de computadoras</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org83130db">
+<h2 id="org83130db">Ejercicios de calentamiento</h2>
+<div class="outline-text-2" id="text-org83130db">
+</div>
+</section>
+<section id="slide-orgda1dd6a">
+<h3 id="orgda1dd6a">Importante</h3>
+<ul>
+<li>Avísanos si hay dudas o algo no funciona, estamos para aprender. (:</li>
+
+</ul>
+</section>
+<section id="slide-orgf3f0b64">
+<h3 id="orgf3f0b64">Instrucciones</h3>
+<ul>
+<li>Registrarse en CyLab Security Academy (Antes <a href="https://cylabacademy.org/">PicoCTF</a>).</li>
+<li>En <b>Learn</b> &gt; <b>Challenge library</b> resolver:
+<ul>
+<li>2warm</li>
+<li>Let&rsquo;s Warm Up</li>
+<li>Warmed Up</li>
+<li>binhexa</li>
+<li>endianness</li>
+<li>runme.py</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgab80484">
+<h2 id="orgab80484">Cierre</h2>
+<ul>
+<li>Revisamos conceptos generales de ciberseguridad y explotación binaria.</li>
+<li>Realizamos algunos ejercicios básicos.</li>
+<li>Recomendado repasar aspectos básicos de programación en C.
+<ul>
+<li>Gustedt, J. (2019). Modern C. Enlace en README del repositorio.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org791d063">
+<h2 id="org791d063">¡Gracias!</h2>
+<blockquote >
+<p>
+I hear and I forget. I see and I remember. I do and I understand.
+</p>
+</blockquote>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>

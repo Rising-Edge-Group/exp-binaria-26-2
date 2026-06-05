@@ -1,0 +1,118 @@
+#+title: Explotación Binaria
+#+SUBTITLE: Introducción a ciberseguridad y conceptos básicos
+#+AUTHOR: Rising Edge - Enrique
+#+DATE: 2026-05-06
+
+:reveal_properties:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+OPTIONS: timestamp:nil toc:1 num:nil
+#+REVEAL_THEME: dracula
+:end:
+
+* Introducción del club
+** ¡Hola! Somos Rising Edge
+#+ATTR_REVEAL: :frag (appear)
+- Una organización estudiantil enfocada en áreas de la computación como
+  - Ciberseguridad
+  - Programación competitiva
+  - Desarrollo de Software y Hardware
+  - ¡Y posiblemente más áreas en el futuro!
+
+** Un poco de historia
+#+ATTR_REVEAL: :frag (appear)
+- Antes de la pandemia existía un club de algoritmia, al regresar presencial ya
+  no se retomó.
+- Al inicio sólo éramos estudiantes de licenciatura aprendiendo programación y
+  haciendo ejercicios de omegaUp y Codeforces.
+
+** Hoy
+- El club ha representado a la la ESIME Culhuacan en varios eventos a nivel
+  nacional e internacional.
+- Está conformado por egresad@s, estudiantes de licenciatura y posgrado.
+
+** Objetivo de ciberseguridad
+#+ATTR_REVEAL: :frag (appear)
+- Aprender y formarnos en temas relacionados a la ciberseguridad ofensiva y
+  defensiva.
+- Participar en competencias tipo Capture The Flag (CTF).
+- *¡Representar a la ESIME Culhuacan en el HackMex!*
+
+** ¿Hackmex?
+:PROPERTIES:
+:reveal_background_iframe: https://www.hackmex.mx/
+:reveal_background: rgb(0,0,0)
+:reveal_background_opacity: 0.5
+:END:
+- CTF que organiza la ESIME Culhuacan en octubre.
+- Participan instituciones de gobierno, académicas y empresas.
+
+* ¿Quién eres?
+- ¿Cuál es tu nombre o cómo te gusta que te llamen?
+- ¿Qué estudias?
+- ¿Cómo te enteraste del club?
+- ¿Algún dato curioso de ti?
+
+* Conceptos importantes antes de iniciar
+** ¿Qué es la seguridad de la información?
+- [[https://en.wikipedia.org/wiki/Computer_security][Enlace]].
+- Práctica de *proteger* la *información* mediante la mitigación de riesgos usando
+  medidas preventivas y reactivas.
+- Busca mantener la triada CID (CIA en inglés).
+
+*** Modelo de protección CID
+#+ATTR_REVEAL: :frag (appear)
+- Confidencialidad
+  - Datos sensibles sólo para entidades autorizadas.
+- Integridad
+  - Datos se mantienen exactos, consistentes y sin alterar (en transmisión o
+    almacenamiento).
+- Disponibilidad
+  - Datos y recursos de red son accesibles a usuarios autorizados cuando son
+    necesarios.
+
+** ¿Es lo mismo la seguridad de la información que la seguridad informática?
+- *No*, la última es un área relacionada con la informática y la telemática que se
+  enfoca en la protección de la *infraestructura computacional*.
+  - Información contenida en una computadora.
+  - Información enviada a través de redes de computadoras.
+
+** ¿Qué es la explotación binaria?
+La explotación de binarios consiste en *alterar* una *aplicación compilada* para
+que *falle* de alguna manera que resulte *ventajosa* para el atacante.
+
+#+begin_quote
+The one where we smash the stack.
+#+end_quote
+
+*** Algunas áreas que involucra la explotación binaria
+- Arquitectura de computadoras
+- Programación
+- Sistemas Operativos
+- Ingeniería Inversa
+- Criptografía
+- Redes de computadoras
+
+* Ejercicios de calentamiento
+** Importante
+- Avísanos si hay dudas o algo no funciona, estamos para aprender. (:
+
+** Instrucciones
+- Registrarse en CyLab Security Academy (Antes [[https://cylabacademy.org/][PicoCTF]]).
+- En *Learn* > *Challenge library* resolver:
+  - 2warm
+  - Let's Warm Up
+  - Warmed Up
+  - binhexa
+  - endianness
+  - runme.py
+
+* Cierre
+- Revisamos conceptos generales de ciberseguridad y explotación binaria.
+- Realizamos algunos ejercicios básicos.
+- Recomendado repasar aspectos básicos de programación en C.
+  - Gustedt, J. (2019). Modern C. Enlace en README del repositorio.
+
+* ¡Gracias!
+#+begin_quote
+I hear and I forget. I see and I remember. I do and I understand.
+#+end_quote
