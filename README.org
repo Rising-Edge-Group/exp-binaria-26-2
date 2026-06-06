@@ -50,6 +50,10 @@ Puedes encontrarlas en la carpeta de [[./materiales/presentaciones/][presentacio
 - Erickson, J. (2008). Hacking: the art of exploitation. No starch press.. [[https://digtvbg.com/files/books-for-hacking/Hacking%20-%20The%20Art%20of%20Exploitation,%202nd%20Edition%20by%20Jon%20Erickson.pdf][Enlace]].
 - Intro to binary exploitation (Pwn). YouTube CryptoCat.
   [[https://www.youtube.com/playlist?list=PLHUKi1UlEgOIc07Rfk2Jgb5fZbxDPec94][Enlace]].
+- Binary Exploitation / Memory Corruption. YouTube LiveOverflow.
+  [[https://youtube.com/playlist?list=PLhixgUqwRTjxglIswKp9mpkfPNfHkzyeN][Enlace]].
+- Gustedt, J. (2019). Modern C. Simon and Schuster.
+  [[https://inria.hal.science/hal-02383654/document][Enlace]].
 - Pwnable.kr. [[https://pwnable.kr/][Enlace]].
 - Microcorruption. NCC Group. [[https://microcorruption.com/][Enlace]].
 - Hack The Box Academy. HTB. [[https://academy.hackthebox.com/][Enlace]]. (Tip: crear cuenta con correo institucional)

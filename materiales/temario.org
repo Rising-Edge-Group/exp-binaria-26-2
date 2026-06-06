@@ -4,59 +4,73 @@ En este documento puedes encontrar los temas y ejercicios propuestos a resolver
 para cada sesión.
 
 * Sesión 1 - 06 Mayo
-** Bienvenida e introducción al club
-** ¿Qué es la seguridad de la información?
-** ¿Qué áreas podemos encontrar en el campo laboral?
-** ¿Qué es la explotación binaria?
-** Ejercicios de introducción
-En la plataforma [[https://picoctf.org][PicoCTF]]
-- Let's Warm Up (General Skills)
-- Warmed Up (General Skills)
+- Bienvenida e introducción al club
+- ¿Qué es la seguridad de la información?
+- ¿Qué áreas podemos encontrar en el campo laboral?
+- ¿Qué es la explotación binaria?
+- Ejercicios de introducción
+  En la plataforma [[https://picoctf.org][PicoCTF]]
+  - Let's Warm Up (General Skills)
+  - Warmed Up (General Skills)
 
 * Sesión 2 - 13 Mayo
-** Configuración de laboratorio en Windows
-- Instalación WSL2 o QEMU
-** Configuración de laboratorio en Linux
-- Instalación de QEMU
-** Actividad
-- Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
-*** Análisis de programa
-*** Explicación de Teoría
-- Estructuras en C
-- Vista general de variables en memoria
+- Configuración de laboratorio en Windows
+  - Instalación WSL2 o QEMU
+- Configuración de laboratorio en Linux
+  - Instalación de QEMU
+- Actividad
+  - Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
+    - Análisis de programa
+    - Explicación de Teoría
+      - Estructuras en C
+      - Vista general de variables en memoria
 
 * Sesión 3 - 19 Mayo
-** Recapitulación stack zero
-** Actividad
-- Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
-*** Análisis de programa
-*** Sección teórica
-- Arquitectura de computadoras
-- Organización de un proceso en memoria (Linux)
-- Funcionamiento de la pila y los marcos de pila (stack frames)
-*** Verificación de vulnerabilidad
-- Usando GDB analizaremos la pila y verificamos el desbordamiento
+- Recapitulación stack zero
+- Actividad
+  - Stack Zero, Phoenix ([[https://exploit.education][exploit.education]])
+    - Análisis de programa
+    - Sección teórica
+      - Arquitectura de computadoras
+      - Organización de un proceso en memoria (Linux)
+      - Funcionamiento de la pila y los marcos de pila (stack frames)
+    - Verificación de vulnerabilidad
+      - Usando GDB analizaremos la pila y verificamos el desbordamiento
 
 * Sesión 4 - 27 Mayo
-** Recapitulación stack zero
-** Actividad
-- Stack One, Phoenix ([[https://exploit.education][exploit.education]])
-*** Análisis de programa
-*** Explicación de Teoría
-- Argumentos de comando
-- /Endianness/ (Byte order)
-*** Verificación de vulnerabilidad
-- Usando GDB analizaremos la pila y verificamos el desbordamiento
+- Recapitulación stack zero
+- Actividad
+  - Stack One, Phoenix ([[https://exploit.education][exploit.education]])
+    - Análisis de programa
+    - Explicación de Teoría
+      - Argumentos de comando
+      - /Endianness/ (Byte order)
+    - Verificación de vulnerabilidad
+      - Usando GDB analizaremos la pila y verificamos el desbordamiento
 
-* Sesión 5 - 27 Mayo
-** Recapitulación stack one
-** Actividad 1
-- Stack two, Phoenix ([[https://exploit.education][exploit.education]])
-*** Análisis de programa
-*** Explicación de Teoría
-*** Verificación de vulnerabilidad
-** Actividad 2
-- Stack three, Phoenix ([[https://exploit.education][exploit.education]])
-*** Análisis de programa
-*** Explicación de Teoría
-*** Verificación de vulnerabilidad
+* Sesión 5 - 03 Junio
+- Recapitulación stack one
+- Actividad 1
+  - Stack two, Phoenix ([[https://exploit.education][exploit.education]])
+    - Análisis de programa
+    - Explicación de Teoría
+    - Verificación de vulnerabilidad
+- Actividad 2
+  - Stack three, Phoenix ([[https://exploit.education][exploit.education]])
+    - Análisis de programa
+    - Explicación de Teoría
+
+* Sesión 6 - 10 Junio
+- Recapitulación
+- Actividad 1
+  - Stack four, Phoenix
+- Actividad 2
+  - Stack five, Phoenix
+    - Análisis de programa
+    - Explicación de Teoría
+      - Shellcode
+- Actividad 3
+  - Format zero, Phoenix
+    - Análisis de programa
+    - Explicación de Teoría
+      - Format strings
