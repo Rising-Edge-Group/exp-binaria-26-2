@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Explotación Binaria</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Explotación Binaria</h1><p class="subtitle">Instalación de laboratorio</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-05-13</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-org07bdf66">Recapitulación</a></li>
+<li><a href="#/slide-orge625bc3">Instalación de laboratorio</a></li>
+<li><a href="#/slide-org156ee57">Cierre</a></li>
+<li><a href="#/slide-org3b5759a">¡Gracias!</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org07bdf66">
+<h2 id="org07bdf66">Recapitulación</h2>
+<ul>
+<li>Revisamos conceptos generales de ciberseguridad y explotación binaria.
+<ul>
+<li>Triada CID</li>
+
+</ul></li>
+<li>Realizamos algunos ejercicios básicos.
+<ul>
+<li>Conversión a diferentes bases</li>
+<li>Endianness</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orge625bc3">
+<h2 id="orge625bc3">Instalación de laboratorio</h2>
+<div class="outline-text-2" id="text-orge625bc3">
+</div>
+</section>
+<section id="slide-org34cdd02">
+<h3 id="org34cdd02">Objetivo</h3>
+<p>
+Levantar un entorno para ejecutar la máquina virtual (VM)
+<a href="https://exploit.education./phoenix/">Phoenix de Exploit Education</a>
+que tiene un formato compatible con QEMU.
+</p>
+</section>
+<section id="slide-orga1c9e66">
+<h3 id="orga1c9e66">Nota</h3>
+<p>
+VirtualBox no funciona para este laboratorio.
+</p>
+</section>
+<section id="slide-orgb1e9c2d">
+<h3 id="orgb1e9c2d">Prerequisitos si usas Windows</h3>
+<p>
+Hay dos opciones para instalar la VM de Phoenix:
+</p>
+
+<ul>
+<li>Tener una VM de Linux en VMWare Workstation</li>
+<li>o Instalar WSL2</li>
+
+</ul>
+
+<p>
+Independiente de la elección también es necesario <b>instalar QEMU</b>.
+</p>
+</section>
+<section id="slide-orgd592540">
+<h3 id="orgd592540">Prerequisitos si usas Linux</h3>
+<ol>
+<li>Instalar QEMU</li>
+
+</ol>
+</section>
+<section id="slide-org3e639a4">
+<h3 id="org3e639a4">Descarga de VM Phoenix</h3>
+<p>
+El siguiente paso es descargar la VM de Phoenix para la arquitectura AMD64:
+</p>
+
+<ul>
+<li><a href="https://exploit.education./downloads/">https://exploit.education./downloads/</a></li>
+
+</ul>
+</section>
+<section id="slide-org14dcf60">
+<h3 id="org14dcf60">Desempaquetar archivos de VM Phoenix</h3>
+<p>
+Ubícate en la carpeta donde descargaste la VM y ejecuta:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>tar -xf exploit-education-phoenix-amd64-v1.0.0-alpha-3.tar.xz
+</code></pre>
+</div>
+</section>
+<section id="slide-org82b015f">
+<h3 id="org82b015f">Inicio de VM Phoenix</h3>
+<p>
+Ingresa a la carpeta que generó el archivo TAR y ejecuta el script de arranque
+(en seguida se mostrará la ventana de la VM si QEMU se ejecutó y configuró
+correctamente):
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim><span style="color: #e69875;">cd</span> exploit-education-phoenix-amd64
+<span style="color: #e69875;">ls</span>
+bash boot-exploit-education-phoenix-amd64.sh
+</code></pre>
+</div>
+</section>
+<section id="slide-org525b76c">
+<h3 id="org525b76c">Conexión a VM Phoenix</h3>
+<p>
+La VM expone el puerto <b>2222</b> mediante <i>port forwarding</i> para conectarnos
+directamente desde SSH:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>ssh user@localhost -p 2222
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org156ee57">
+<h2 id="org156ee57">Cierre</h2>
+<ul>
+<li>En esta sesión levantamos el laboratorio de trabajo.</li>
+<li>La siguiente sesión iniciamos con corrupción de memoria.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3b5759a">
+<h2 id="org3b5759a">¡Gracias!</h2>
+<blockquote >
+<p>
+All hope abandon, ye who enter here!
+</p>
+</blockquote>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>

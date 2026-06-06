@@ -1,0 +1,79 @@
+#+title: Explotación Binaria
+#+SUBTITLE: Instalación de laboratorio
+#+AUTHOR: Rising Edge - Enrique
+#+DATE: 2026-05-13
+
+:reveal_properties:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+OPTIONS: timestamp:nil toc:1 num:nil
+#+REVEAL_THEME: dracula
+:end:
+
+* Recapitulación
+- Revisamos conceptos generales de ciberseguridad y explotación binaria.
+  - Triada CID
+- Realizamos algunos ejercicios básicos.
+  - Conversión a diferentes bases
+  - Endianness
+
+* Instalación de laboratorio
+** Objetivo
+Levantar un entorno para ejecutar la máquina virtual (VM)
+[[https://exploit.education./phoenix/][Phoenix de Exploit Education]]
+que tiene un formato compatible con QEMU.
+
+** Nota
+VirtualBox no funciona para este laboratorio.
+
+** Prerequisitos si usas Windows
+Hay dos opciones para instalar la VM de Phoenix:
+
+- Tener una VM de Linux en VMWare Workstation
+- o Instalar WSL2
+
+Independiente de la elección también es necesario *instalar QEMU*.
+
+** Prerequisitos si usas Linux
+1. Instalar QEMU
+
+** Descarga de VM Phoenix
+El siguiente paso es descargar la VM de Phoenix para la arquitectura AMD64:
+
+- https://exploit.education./downloads/
+
+** Desempaquetar archivos de VM Phoenix
+
+Ubícate en la carpeta donde descargaste la VM y ejecuta:
+
+#+begin_src bash
+tar -xf exploit-education-phoenix-amd64-v1.0.0-alpha-3.tar.xz
+#+end_src
+
+** Inicio de VM Phoenix
+
+Ingresa a la carpeta que generó el archivo TAR y ejecuta el script de arranque
+(en seguida se mostrará la ventana de la VM si QEMU se ejecutó y configuró
+correctamente):
+
+#+begin_src bash
+cd exploit-education-phoenix-amd64
+ls
+bash boot-exploit-education-phoenix-amd64.sh
+#+end_src
+
+** Conexión a VM Phoenix
+La VM expone el puerto *2222* mediante /port forwarding/ para conectarnos
+directamente desde SSH:
+
+#+begin_src bash
+ssh user@localhost -p 2222
+#+end_src
+
+* Cierre
+- En esta sesión levantamos el laboratorio de trabajo.
+- La siguiente sesión iniciamos con corrupción de memoria.
+
+* ¡Gracias!
+#+begin_quote
+All hope abandon, ye who enter here!
+#+end_quote
